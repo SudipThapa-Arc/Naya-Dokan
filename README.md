@@ -1,6 +1,7 @@
 # 🌐 Naya Dokan - Modern E-commerce App
 
 A sleek and modern e-commerce application built with Flutter, offering a seamless shopping experience with a beautiful UI and robust functionality.
+(Under Construction)
 
 ## 💡 Key Features
 
