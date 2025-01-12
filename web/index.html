@@ -37,15 +37,7 @@
   <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js"></script>
   <script>
-    const firebaseConfig = {
-      apiKey: "AIzaSyA62VXMo0VCsVGuo6woVJLsJgX6wI5ZEcY",
-  authDomain: "nayadokan-d6874.firebaseapp.com",
-  projectId: "nayadokan-d6874",
-  storageBucket: "nayadokan-d6874.firebasestorage.app",
-  messagingSenderId: "666954474736",
-  appId: "1:666954474736:web:b5db9004a736134ec44e35",
-  measurementId: "G-Q5JE67L8SE"
-    };
+    const firebaseConfig = JSON.parse(process.env.FIREBASE_CONFIG);
     firebase.initializeApp(firebaseConfig);
   </script>
 </head>
