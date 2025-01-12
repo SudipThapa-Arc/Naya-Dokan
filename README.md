@@ -1,28 +1,28 @@
-# 🛟️ Naya Dokan - Modern E-commerce App
+# 🌐 Naya Dokan - Modern E-commerce App
 
 A sleek and modern e-commerce application built with Flutter, offering a seamless shopping experience with a beautiful UI and robust functionality.
 
-## ✨ Features
+## 💡 Key Features
 
-- 🔐 Secure authentication with Firebase
-- 🏪 Beautiful product catalog with search functionality
-- 🛒 Shopping cart management
-- 💳 Smooth checkout process
-- ⭐ Product ratings and reviews
-- 📱 Responsive design for web and mobile
+- 🔒 **Secure Authentication**: Powered by [Firebase Auth](https://firebase.google.com/products/auth).
+- 🗺️ **Beautiful Product Catalog**: Includes search functionality for easy browsing.
+- 🛒 **Shopping Cart Management**: Effortlessly manage your cart.
+- 💳 **Smooth Checkout Process**: Streamlined for a hassle-free experience.
+- 🌟 **Product Ratings and Reviews**: Engage with the community.
+- 📲 **Responsive Design**: Optimized for both web and mobile platforms.
 
 ## 🚀 Technologies Used
 
-- **Frontend Framework**: Flutter
-- **State Management**: Riverpod
-- **Authentication**: Firebase Auth
-- **Database**: Cloud Firestore
-- **Navigation**: Go Router
+- **Frontend Framework**: [Flutter](https://flutter.dev)
+- **State Management**: [Riverpod](https://riverpod.dev)
+- **Authentication**: [Firebase Auth](https://firebase.google.com/products/auth)
+- **Database**: [Cloud Firestore](https://firebase.google.com/products/firestore)
+- **Navigation**: [Go Router](https://pub.dev/packages/go_router)
 - **UI Components**: Custom Material Design
-- **Styling**: Google Fonts
+- **Styling**: [Google Fonts](https://fonts.google.com)
 - **Loading States**: Shimmer Effects
 
-## 💧 Project Structure
+## 🌐 Project Structure
 
 ```
 lib/
@@ -60,7 +60,7 @@ lib/
 
 4. **Run the app**
    ```bash
-   flutter run -d chrome
+   flutter run
    ```
 
 ## 💻 Usage
@@ -103,7 +103,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 - **Sudip Thapa** - Creator and initial work
 
-## 🙏 Acknowledgments
+##  Acknowledgments
 
 - Flutter Team for the amazing framework.
 - Firebase for backend services.
