@@ -5,6 +5,7 @@ import 'package:e_commerce/routes/app_routes.dart';
 import 'package:e_commerce/core/constants/themes.dart';
 import 'firebase_options.dart';
 import 'services/dummy_data_service.dart';
+// import 'services/auth_service.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
