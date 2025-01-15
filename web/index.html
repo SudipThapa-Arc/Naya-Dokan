@@ -27,18 +27,25 @@
   <link rel="apple-touch-icon" href="icons/Icon-192.png">
 
   <!-- Favicon -->
-  <link rel="icon" type="image/png" href="favicon.png"/>
+  <link rel="icon" type="image/svg" href="noun-e-commerce-1318743.svg"/>
 
   <title>e_commerce</title>
   <link rel="manifest" href="manifest.json">
 
   <!-- Add these before your Flutter app script -->
-  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js"></script>
-  <script>
-    const firebaseConfig = JSON.parse(process.env.FIREBASE_CONFIG);
-    firebase.initializeApp(firebaseConfig);
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+    import { getAuth } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+    import { getFirestore } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+    const app = initializeApp({
+      projectId: "nayadokan-d6874",
+      authDomain: "nayadokan-d6874.firebaseapp.com"
+    });
+
+    window.fbApp = app;
+    window.fbAuth = getAuth(app);
+    window.fbDb = getFirestore(app);
   </script>
 </head>
 <body>
