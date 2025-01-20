@@ -29,6 +29,10 @@ mixin _$ProductModel {
   int get stock => throw _privateConstructorUsedError;
   double get rating => throw _privateConstructorUsedError;
   int get reviewCount => throw _privateConstructorUsedError;
+  double? get discount => throw _privateConstructorUsedError;
+  List<String> get colors => throw _privateConstructorUsedError;
+  List<String> get sizes => throw _privateConstructorUsedError;
+  List<String> get features => throw _privateConstructorUsedError;
   bool get isFavorite => throw _privateConstructorUsedError;
 
   /// Serializes this ProductModel to a JSON map.
@@ -57,6 +61,10 @@ abstract class $ProductModelCopyWith<$Res> {
       int stock,
       double rating,
       int reviewCount,
+      double? discount,
+      List<String> colors,
+      List<String> sizes,
+      List<String> features,
       bool isFavorite});
 }
 
@@ -84,6 +92,10 @@ class _$ProductModelCopyWithImpl<$Res, $Val extends ProductModel>
     Object? stock = null,
     Object? rating = null,
     Object? reviewCount = null,
+    Object? discount = freezed,
+    Object? colors = null,
+    Object? sizes = null,
+    Object? features = null,
     Object? isFavorite = null,
   }) {
     return _then(_value.copyWith(
@@ -123,6 +135,22 @@ class _$ProductModelCopyWithImpl<$Res, $Val extends ProductModel>
           ? _value.reviewCount
           : reviewCount // ignore: cast_nullable_to_non_nullable
               as int,
+      discount: freezed == discount
+          ? _value.discount
+          : discount // ignore: cast_nullable_to_non_nullable
+              as double?,
+      colors: null == colors
+          ? _value.colors
+          : colors // ignore: cast_nullable_to_non_nullable
+              as List<String>,
+      sizes: null == sizes
+          ? _value.sizes
+          : sizes // ignore: cast_nullable_to_non_nullable
+              as List<String>,
+      features: null == features
+          ? _value.features
+          : features // ignore: cast_nullable_to_non_nullable
+              as List<String>,
       isFavorite: null == isFavorite
           ? _value.isFavorite
           : isFavorite // ignore: cast_nullable_to_non_nullable
@@ -149,6 +177,10 @@ abstract class _$$ProductModelImplCopyWith<$Res>
       int stock,
       double rating,
       int reviewCount,
+      double? discount,
+      List<String> colors,
+      List<String> sizes,
+      List<String> features,
       bool isFavorite});
 }
 
@@ -174,6 +206,10 @@ class __$$ProductModelImplCopyWithImpl<$Res>
     Object? stock = null,
     Object? rating = null,
     Object? reviewCount = null,
+    Object? discount = freezed,
+    Object? colors = null,
+    Object? sizes = null,
+    Object? features = null,
     Object? isFavorite = null,
   }) {
     return _then(_$ProductModelImpl(
@@ -213,6 +249,22 @@ class __$$ProductModelImplCopyWithImpl<$Res>
           ? _value.reviewCount
           : reviewCount // ignore: cast_nullable_to_non_nullable
               as int,
+      discount: freezed == discount
+          ? _value.discount
+          : discount // ignore: cast_nullable_to_non_nullable
+              as double?,
+      colors: null == colors
+          ? _value._colors
+          : colors // ignore: cast_nullable_to_non_nullable
+              as List<String>,
+      sizes: null == sizes
+          ? _value._sizes
+          : sizes // ignore: cast_nullable_to_non_nullable
+              as List<String>,
+      features: null == features
+          ? _value._features
+          : features // ignore: cast_nullable_to_non_nullable
+              as List<String>,
       isFavorite: null == isFavorite
           ? _value.isFavorite
           : isFavorite // ignore: cast_nullable_to_non_nullable
@@ -231,11 +283,18 @@ class _$ProductModelImpl implements _ProductModel {
       required this.price,
       required final List<String> images,
       required this.category,
-      this.stock = 0,
-      this.rating = 0.0,
-      this.reviewCount = 0,
+      required this.stock,
+      required this.rating,
+      required this.reviewCount,
+      this.discount = null,
+      final List<String> colors = const [],
+      final List<String> sizes = const [],
+      final List<String> features = const [],
       this.isFavorite = false})
-      : _images = images;
+      : _images = images,
+        _colors = colors,
+        _sizes = sizes,
+        _features = features;
 
   factory _$ProductModelImpl.fromJson(Map<String, dynamic> json) =>
       _$$ProductModelImplFromJson(json);
@@ -259,21 +318,48 @@ class _$ProductModelImpl implements _ProductModel {
   @override
   final String category;
   @override
-  @JsonKey()
   final int stock;
   @override
-  @JsonKey()
   final double rating;
   @override
-  @JsonKey()
   final int reviewCount;
+  @override
+  @JsonKey()
+  final double? discount;
+  final List<String> _colors;
+  @override
+  @JsonKey()
+  List<String> get colors {
+    if (_colors is EqualUnmodifiableListView) return _colors;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_colors);
+  }
+
+  final List<String> _sizes;
+  @override
+  @JsonKey()
+  List<String> get sizes {
+    if (_sizes is EqualUnmodifiableListView) return _sizes;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_sizes);
+  }
+
+  final List<String> _features;
+  @override
+  @JsonKey()
+  List<String> get features {
+    if (_features is EqualUnmodifiableListView) return _features;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_features);
+  }
+
   @override
   @JsonKey()
   final bool isFavorite;
 
   @override
   String toString() {
-    return 'ProductModel(id: $id, name: $name, description: $description, price: $price, images: $images, category: $category, stock: $stock, rating: $rating, reviewCount: $reviewCount, isFavorite: $isFavorite)';
+    return 'ProductModel(id: $id, name: $name, description: $description, price: $price, images: $images, category: $category, stock: $stock, rating: $rating, reviewCount: $reviewCount, discount: $discount, colors: $colors, sizes: $sizes, features: $features, isFavorite: $isFavorite)';
   }
 
   @override
@@ -293,6 +379,11 @@ class _$ProductModelImpl implements _ProductModel {
             (identical(other.rating, rating) || other.rating == rating) &&
             (identical(other.reviewCount, reviewCount) ||
                 other.reviewCount == reviewCount) &&
+            (identical(other.discount, discount) ||
+                other.discount == discount) &&
+            const DeepCollectionEquality().equals(other._colors, _colors) &&
+            const DeepCollectionEquality().equals(other._sizes, _sizes) &&
+            const DeepCollectionEquality().equals(other._features, _features) &&
             (identical(other.isFavorite, isFavorite) ||
                 other.isFavorite == isFavorite));
   }
@@ -310,6 +401,10 @@ class _$ProductModelImpl implements _ProductModel {
       stock,
       rating,
       reviewCount,
+      discount,
+      const DeepCollectionEquality().hash(_colors),
+      const DeepCollectionEquality().hash(_sizes),
+      const DeepCollectionEquality().hash(_features),
       isFavorite);
 
   /// Create a copy of ProductModel
@@ -336,9 +431,13 @@ abstract class _ProductModel implements ProductModel {
       required final double price,
       required final List<String> images,
       required final String category,
-      final int stock,
-      final double rating,
-      final int reviewCount,
+      required final int stock,
+      required final double rating,
+      required final int reviewCount,
+      final double? discount,
+      final List<String> colors,
+      final List<String> sizes,
+      final List<String> features,
       final bool isFavorite}) = _$ProductModelImpl;
 
   factory _ProductModel.fromJson(Map<String, dynamic> json) =
@@ -362,6 +461,14 @@ abstract class _ProductModel implements ProductModel {
   double get rating;
   @override
   int get reviewCount;
+  @override
+  double? get discount;
+  @override
+  List<String> get colors;
+  @override
+  List<String> get sizes;
+  @override
+  List<String> get features;
   @override
   bool get isFavorite;
 

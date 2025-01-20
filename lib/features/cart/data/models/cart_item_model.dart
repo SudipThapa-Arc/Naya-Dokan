@@ -9,7 +9,9 @@ class CartItemModel with _$CartItemModel {
   const factory CartItemModel({
     required String id,
     required ProductModel product,
-    @Default(1) int quantity,
+    required int quantity,
+    String? selectedColor,
+    String? selectedSize,
   }) = _CartItemModel;
 
   factory CartItemModel.fromJson(Map<String, dynamic> json) =>

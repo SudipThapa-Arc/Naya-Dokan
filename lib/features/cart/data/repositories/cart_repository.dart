@@ -28,6 +28,7 @@ class CartRepository {
             id: doc.id,
             product: ProductModel.fromJson(productDoc.data()!),
             quantity: data['quantity'] as int,
+            selectedColor: '',
           );
         }).toList(),
       );

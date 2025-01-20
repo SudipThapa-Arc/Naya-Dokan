@@ -62,6 +62,15 @@ class ProductRepository {
       throw 'Failed to load reviews: $e';
     }
   }
+
+  Future<void> setFavorite(String productId, bool isFavorite) async {
+    try {
+      // TODO: Implement actual API call
+      await Future.delayed(const Duration(milliseconds: 500));
+    } catch (e) {
+      throw Exception('Failed to update favorite status');
+    }
+  }
 }
 
 final productRepositoryProvider = Provider<ProductRepository>((ref) {

@@ -33,14 +33,21 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
   Future<void> _register() async {
     if (_formKey.currentState!.validate()) {
       try {
-        await ref.read(authStateProvider.notifier).signUp(
-              _emailController.text,
+        await ref.read(authControllerProvider.notifier).signUp(
+              _emailController.text.trim(),
               _passwordController.text,
-              _nameController.text,
+              _nameController.text.trim(),
             );
+        if (mounted) {
+          context.go('/products');
+        }
       } catch (e) {
         if (mounted) {
-          Helpers.showSnackBar(context, e.toString(), isError: true);
+          Helpers.showSnackBar(
+            context,
+            e.toString(),
+            isError: true,
+          );
         }
       }
     }

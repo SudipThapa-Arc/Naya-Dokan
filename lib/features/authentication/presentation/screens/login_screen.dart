@@ -10,6 +10,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class LoginScreen extends ConsumerStatefulWidget {
   const LoginScreen({super.key});
@@ -33,16 +34,20 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   Future<void> _login() async {
     if (_formKey.currentState!.validate()) {
       try {
-        debugPrint('Attempting login with email: ${_emailController.text}');
-        await ref.read(authStateProvider.notifier).signIn(
-              _emailController.text,
+        await ref.read(authControllerProvider.notifier).signIn(
+              _emailController.text.trim(),
               _passwordController.text,
             );
-        debugPrint('Login successful');
-      } catch (e) {
-        debugPrint('Login error: $e');
         if (mounted) {
-          Helpers.showSnackBar(context, e.toString(), isError: true);
+          context.go('/products');
+        }
+      } catch (e) {
+        if (mounted) {
+          Helpers.showSnackBar(
+            context,
+            e.toString(),
+            isError: true,
+          );
         }
       }
     }
@@ -96,7 +101,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                         ),
                         const SizedBox(height: 40),
                         Image.asset(
-                          'assets/images/login_illustration.png',
+                          'assets/images/',
                           width: 400,
                           errorBuilder: (context, error, stackTrace) {
                             return Container(

@@ -1,5 +1,6 @@
 // ignore_for_file: unused_import
 
+import 'package:e_commerce/core/widgets/sliver_header_delegate.dart';
 import 'package:e_commerce/features/product/presentation/widgets/category_shimmer.dart';
 import 'package:e_commerce/providers/cart_provider.dart';
 import 'package:flutter/material.dart';
@@ -25,57 +26,74 @@ class ProductListScreen extends ConsumerWidget {
       backgroundColor: AppTheme.backgroundColor,
       body: CustomScrollView(
         slivers: [
-          // Custom App Bar with Search
           SliverAppBar(
             floating: true,
             pinned: true,
-            expandedHeight: 120,
+            expandedHeight: 160,
+            toolbarHeight: 0,
             backgroundColor: Colors.white,
             elevation: 0,
             flexibleSpace: FlexibleSpaceBar(
+              expandedTitleScale: 1.0,
               background: Container(
                 color: Colors.white,
-                padding: const EdgeInsets.fromLTRB(16, 60, 16, 0),
-                child: Column(
-                  children: [
-                    Row(
-                      children: [
-                        Text(
-                          'Discover',
-                          style: GoogleFonts.spaceMono(
-                            fontSize: 24,
-                            fontWeight: FontWeight.bold,
-                            color: AppTheme.textColor,
+                padding: EdgeInsets.only(
+                  top: MediaQuery.of(context).padding.top + 8,
+                  left: 16,
+                  right: 16,
+                  bottom: 8,
+                ),
+                child: SafeArea(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Row(
+                        children: [
+                          Text(
+                            'Discover',
+                            style: GoogleFonts.spaceMono(
+                              fontSize: 24,
+                              fontWeight: FontWeight.bold,
+                              color: AppTheme.textColor,
+                            ),
                           ),
-                        ),
-                        const Spacer(),
-                        IconButton(
-                          icon: const Icon(Icons.shopping_cart_outlined),
-                          onPressed: () => context.push('/cart'),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 16),
-                    SearchBar(
-                      hintText: 'Search products...',
-                      leading: const Icon(Icons.search),
-                      padding: const MaterialStatePropertyAll(
-                        EdgeInsets.symmetric(horizontal: 16),
+                          const Spacer(),
+                          IconButton(
+                            icon: const Icon(Icons.shopping_cart_outlined),
+                            onPressed: () => context.push('/cart'),
+                          ),
+                        ],
                       ),
-                    ),
-                  ],
+                      const SizedBox(height: 8),
+                      const SearchBar(
+                        hintText: 'Search products...',
+                        leading: Icon(Icons.search),
+                        padding: MaterialStatePropertyAll(
+                          EdgeInsets.symmetric(horizontal: 16),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),
           ),
 
-          // Categories
-          SliverToBoxAdapter(
-            child: categoriesAsync.when(
-              data: (categories) => CategoryFilter(categories: categories),
-              loading: () => const CategoryShimmer(),
-              error: (_, __) => const Center(
-                child: Text('Failed to load categories'),
+          // Categories with fixed height
+          SliverPersistentHeader(
+            pinned: true,
+            delegate: SliverHeaderDelegate(
+              minHeight: 60,
+              maxHeight: 60,
+              child: Container(
+                color: Colors.white,
+                child: categoriesAsync.when(
+                  data: (categories) => CategoryFilter(categories: categories),
+                  loading: () => const CategoryShimmer(),
+                  error: (_, __) => const Center(
+                    child: Text('Failed to load categories'),
+                  ),
+                ),
               ),
             ),
           ),

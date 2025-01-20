@@ -1,72 +1,110 @@
+// ignore_for_file: unused_import
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../../../core/constants/themes.dart';
 import '../../../../providers/product_provider.dart';
 
-class CategoryFilter extends StatelessWidget {
+class CategoryFilter extends StatefulWidget {
   final List<String> categories;
 
   const CategoryFilter({super.key, required this.categories});
 
   @override
+  State<CategoryFilter> createState() => _CategoryFilterState();
+}
+
+class _CategoryFilterState extends State<CategoryFilter> {
+  final ScrollController _scrollController = ScrollController();
+
+  void _scrollForward() {
+    final currentPosition = _scrollController.position.pixels;
+    _scrollController.animateTo(
+      currentPosition + (3 * 100), // Approximate width of 3 items
+      duration: const Duration(milliseconds: 300),
+      curve: Curves.easeInOut,
+    );
+  }
+
+  void _scrollBackward() {
+    final currentPosition = _scrollController.position.pixels;
+    _scrollController.animateTo(
+      currentPosition - (3 * 100), // Approximate width of 3 items
+      duration: const Duration(milliseconds: 300),
+      curve: Curves.easeInOut,
+    );
+  }
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return Consumer(
-      builder: (context, ref, _) {
-        final selectedCategory = ref.watch(selectedCategoryProvider);
+    final uniqueCategories = widget.categories.toSet().toList();
 
-        return Container(
-          height: 60,
-          padding: const EdgeInsets.symmetric(horizontal: 16),
-          child: ListView.builder(
+    return Container(
+      height: 50,
+      margin: const EdgeInsets.only(top: 8), // Fix overflow
+      child: Stack(
+        children: [
+          ListView.builder(
+            controller: _scrollController,
             scrollDirection: Axis.horizontal,
-            itemCount: categories.length + 1, // +1 for "All" category
-            itemBuilder: (context, index) {
-              final isAll = index == 0;
-              final category = isAll ? 'All' : categories[index - 1];
-              final isSelected = isAll
-                  ? selectedCategory == null
-                  : selectedCategory == category;
-
-              return Padding(
-                padding: const EdgeInsets.only(right: 12),
-                child: Material(
-                  color: isSelected
-                      ? Theme.of(context).colorScheme.primary
-                      : Colors.transparent,
+            padding: const EdgeInsets.symmetric(horizontal: 56),
+            itemCount: uniqueCategories.length,
+            itemBuilder: (context, index) => Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 4),
+              child: FilterChip(
+                label: Text(uniqueCategories[index]),
+                onSelected: (selected) {
+                  // Handle category selection
+                },
+                backgroundColor: Colors.white,
+                selectedColor: AppTheme.primaryColor.withOpacity(0.1),
+                side: BorderSide(color: Colors.grey[300]!),
+                shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(20),
-                  child: InkWell(
-                    borderRadius: BorderRadius.circular(20),
-                    onTap: () {
-                      ref.read(selectedCategoryProvider.notifier).state =
-                          isAll ? null : category;
-                    },
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 20,
-                        vertical: 8,
-                      ),
-                      decoration: BoxDecoration(
-                        border: Border.all(
-                          color: isSelected
-                              ? Colors.transparent
-                              : Colors.grey[300]!,
-                        ),
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      child: Text(
-                        category,
-                        style: TextStyle(
-                          color: isSelected ? Colors.white : Colors.grey[700],
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                    ),
-                  ),
                 ),
-              );
-            },
+              ),
+            ),
           ),
-        );
-      },
+          Positioned(
+            left: 8,
+            top: 0,
+            bottom: 0,
+            child: Center(
+              child: IconButton(
+                onPressed: _scrollBackward,
+                icon: const Icon(Icons.chevron_left),
+                style: IconButton.styleFrom(
+                  backgroundColor: Colors.white,
+                  elevation: 2,
+                  shadowColor: Colors.black26,
+                ),
+              ),
+            ),
+          ),
+          Positioned(
+            right: 8,
+            top: 0,
+            bottom: 0,
+            child: Center(
+              child: IconButton(
+                onPressed: _scrollForward,
+                icon: const Icon(Icons.chevron_right),
+                style: IconButton.styleFrom(
+                  backgroundColor: Colors.white,
+                  elevation: 2,
+                  shadowColor: Colors.black26,
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

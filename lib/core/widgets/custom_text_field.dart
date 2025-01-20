@@ -2,7 +2,7 @@ import 'package:e_commerce/core/constants/themes.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-class CustomTextField extends StatelessWidget {
+class CustomTextField extends StatefulWidget {
   final TextEditingController controller;
   final String label;
   final String hint;
@@ -19,17 +19,24 @@ class CustomTextField extends StatelessWidget {
   });
 
   @override
+  State<CustomTextField> createState() => _CustomTextFieldState();
+}
+
+class _CustomTextFieldState extends State<CustomTextField> {
+  bool _obscureText = true;
+
+  @override
   Widget build(BuildContext context) {
     return TextFormField(
-      controller: controller,
-      obscureText: isPassword,
+      controller: widget.controller,
+      obscureText: widget.isPassword && _obscureText,
       style: GoogleFonts.inter(
         color: Colors.black,
         fontSize: 16,
       ),
       decoration: InputDecoration(
-        labelText: label,
-        hintText: hint,
+        labelText: widget.label,
+        hintText: widget.hint,
         labelStyle: GoogleFonts.inter(
           color: Colors.grey[700],
         ),
@@ -50,8 +57,21 @@ class CustomTextField extends StatelessWidget {
         ),
         filled: true,
         fillColor: Colors.white,
+        suffixIcon: widget.isPassword
+            ? IconButton(
+                icon: Icon(
+                  _obscureText ? Icons.visibility_off : Icons.visibility,
+                  color: Colors.grey[600],
+                ),
+                onPressed: () {
+                  setState(() {
+                    _obscureText = !_obscureText;
+                  });
+                },
+              )
+            : null,
       ),
-      validator: validator,
+      validator: widget.validator,
     );
   }
 }

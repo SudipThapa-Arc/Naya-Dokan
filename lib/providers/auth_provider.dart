@@ -1,65 +1,59 @@
+// ignore_for_file: unused_import
+
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../features/authentication/data/models/user_model.dart';
 import '../features/authentication/data/repositories/auth_repository.dart';
 
-final authStateProvider =
-    StateNotifierProvider<AuthNotifier, AsyncValue<UserModel?>>((ref) {
-  return AuthNotifier(ref.watch(authRepositoryProvider));
+final authProvider = Provider((ref) => FirebaseAuth.instance);
+
+final authStateProvider = StreamProvider<User?>((ref) {
+  return ref.watch(authProvider).authStateChanges();
 });
 
-class AuthNotifier extends StateNotifier<AsyncValue<UserModel?>> {
+final authControllerProvider =
+    StateNotifierProvider<AuthController, AsyncValue<void>>((ref) {
+  final repository = ref.watch(authRepositoryProvider);
+  return AuthController(repository);
+});
+
+class AuthController extends StateNotifier<AsyncValue<void>> {
   final AuthRepository _repository;
 
-  AuthNotifier(this._repository) : super(const AsyncValue.loading()) {
-    _init();
-  }
-
-  Future<void> _init() async {
-    // Initialize auth state
-    state = const AsyncValue.loading();
-    try {
-      final user = _repository.auth.currentUser;
-      if (user != null) {
-        final userDoc =
-            await _repository.firestore.collection('users').doc(user.uid).get();
-        state = AsyncValue.data(UserModel.fromJson(userDoc.data()!));
-      } else {
-        state = const AsyncValue.data(null);
-      }
-    } catch (e, st) {
-      state = AsyncValue.error(e, st);
-    }
-  }
+  AuthController(this._repository) : super(const AsyncValue.data(null));
 
   Future<void> signIn(String email, String password) async {
-    state = const AsyncValue.loading();
     try {
-      final user = await _repository.signIn(
-        email: email,
-        password: password,
-      );
-      state = AsyncValue.data(user);
-    } catch (e, st) {
-      state = AsyncValue.error(e, st);
+      state = const AsyncValue.loading();
+      await _repository.signIn(email: email, password: password);
+      state = const AsyncValue.data(null);
+    } on FirebaseAuthException catch (e) {
+      state = AsyncValue.error(
+          _repository.handleAuthException(e), StackTrace.current);
     }
   }
 
   Future<void> signUp(String email, String password, String name) async {
-    state = const AsyncValue.loading();
     try {
-      final user = await _repository.signUp(
+      state = const AsyncValue.loading();
+      await _repository.signUp(
         email: email,
         password: password,
         name: name,
       );
-      state = AsyncValue.data(user);
-    } catch (e, st) {
-      state = AsyncValue.error(e, st);
+      state = const AsyncValue.data(null);
+    } on FirebaseAuthException catch (e) {
+      state = AsyncValue.error(
+          _repository.handleAuthException(e), StackTrace.current);
     }
   }
 
   Future<void> signOut() async {
-    await _repository.signOut();
-    state = const AsyncValue.data(null);
+    try {
+      state = const AsyncValue.loading();
+      await _repository.signOut();
+      state = const AsyncValue.data(null);
+    } catch (e) {
+      state = AsyncValue.error(e, StackTrace.current);
+    }
   }
 }

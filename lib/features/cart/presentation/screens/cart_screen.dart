@@ -1,4 +1,4 @@
-// ignore_for_file: unused_import
+// ignore_for_file: unused_import, use_build_context_synchronously
 
 import 'package:e_commerce/core/constants/themes.dart';
 import 'package:flutter/material.dart';
@@ -18,85 +18,142 @@ class CartScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final cartAsync = ref.watch(cartProvider);
+    final cartItems = ref.watch(cartProvider);
+    final totalAmount = ref.watch(cartProvider.notifier).totalAmount;
 
     return Scaffold(
-      backgroundColor: AppTheme.backgroundColor,
       appBar: AppBar(
-        title: Text(
-          'Shopping Cart',
-          style: GoogleFonts.spaceMono(
-            fontWeight: FontWeight.bold,
-            color: AppTheme.textColor,
+        title: const Text('Shopping Cart'),
+        actions: [
+          cartItems.when(
+            data: (items) => items.isNotEmpty
+                ? IconButton(
+                    icon: const Icon(Icons.delete_outline),
+                    onPressed: () {
+                      ref.read(cartProvider.notifier).clearCart();
+                    },
+                  )
+                : const SizedBox.shrink(),
+            loading: () => const SizedBox.shrink(),
+            error: (_, __) => const SizedBox.shrink(),
           ),
-        ),
-        backgroundColor: Colors.white,
-        elevation: 0,
+        ],
       ),
-      body: cartAsync.when(
-        data: (cartItems) {
-          if (cartItems.isEmpty) {
-            return Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(
-                    Icons.shopping_cart_outlined,
-                    size: 64,
-                    color: Colors.grey[400],
-                  ),
-                  const SizedBox(height: 16),
-                  Text(
-                    'Your cart is empty',
-                    style: GoogleFonts.inter(
-                      fontSize: 18,
-                      color: Colors.grey[600],
-                    ),
-                  ),
-                  const SizedBox(height: 24),
-                  CustomButton(
-                    text: 'Start Shopping',
-                    onPressed: () => context.go('/'),
-                    isOutlined: true,
-                  ),
-                ],
+      body: cartItems.when(
+        data: (items) => items.isEmpty
+            ? const Center(child: Text('Your cart is empty'))
+            : ListView.builder(
+                padding: const EdgeInsets.all(16),
+                itemCount: items.length,
+                itemBuilder: (context, index) => CartItemCard(
+                  cartItem: items[index],
+                ),
               ),
-            );
-          }
-
-          return Column(
-            children: [
-              Expanded(
-                child: ListView.builder(
+        loading: () => const Center(child: CircularProgressIndicator()),
+        error: (_, __) => const Center(child: Text('Error loading cart')),
+      ),
+      bottomNavigationBar: cartItems.when(
+        data: (items) => items.isEmpty
+            ? null
+            : SafeArea(
+                child: Container(
                   padding: const EdgeInsets.all(16),
-                  itemCount: cartItems.length,
-                  itemBuilder: (context, index) => Padding(
-                    padding: const EdgeInsets.only(bottom: 16),
-                    child: CartItemCard(
-                      item: cartItems[index],
-                      onUpdateQuantity: (quantity) {
-                        ref.read(cartProvider.notifier).updateQuantity(
-                              cartItems[index].product.id,
-                              quantity,
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.05),
+                        blurRadius: 10,
+                      ),
+                    ],
+                  ),
+                  child: Row(
+                    children: [
+                      Column(
+                        mainAxisSize: MainAxisSize.min,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Text('Total'),
+                          Text(
+                            Helpers.formatPrice(totalAmount),
+                            style: Theme.of(context)
+                                .textTheme
+                                .titleLarge
+                                ?.copyWith(
+                                  color: AppTheme.primaryColor,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(width: 16),
+                      Expanded(
+                        child: ElevatedButton(
+                          onPressed: () async {
+                            showDialog(
+                              context: context,
+                              barrierDismissible: false,
+                              builder: (context) => const Center(
+                                child: CircularProgressIndicator(),
+                              ),
                             );
-                      },
-                      onRemove: () {
-                        ref.read(cartProvider.notifier).removeFromCart(
-                              cartItems[index].product.id,
-                            );
-                      },
-                    ),
+
+                            try {
+                              // Process checkout
+                              await ref.read(cartProvider.notifier).checkout();
+
+                              // Close loading dialog
+                              Navigator.pop(context);
+
+                              // Show success dialog
+                              showDialog(
+                                context: context,
+                                builder: (context) => AlertDialog(
+                                  title: const Text('Success'),
+                                  content: const Text(
+                                      'Your order has been placed successfully!'),
+                                  actions: [
+                                    TextButton(
+                                      onPressed: () {
+                                        Navigator.pop(context);
+                                        context
+                                            .go('/'); // Navigate back to home
+                                      },
+                                      child: const Text('OK'),
+                                    ),
+                                  ],
+                                ),
+                              );
+                            } catch (e) {
+                              // Close loading dialog
+                              Navigator.pop(context);
+
+                              // Show error dialog
+                              showDialog(
+                                context: context,
+                                builder: (context) => AlertDialog(
+                                  title: const Text('Error'),
+                                  content: const Text(
+                                      'Failed to process checkout. Please try again.'),
+                                  actions: [
+                                    TextButton(
+                                      onPressed: () => Navigator.pop(context),
+                                      child: const Text('OK'),
+                                    ),
+                                  ],
+                                ),
+                              );
+                            }
+                          },
+                          child: const Text('Proceed to Checkout'),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               ),
-              CartSummary(items: cartItems),
-            ],
-          );
-        },
-        loading: () => const Center(child: CircularProgressIndicator()),
-        error: (_, __) => const Center(
-          child: Text('Failed to load cart'),
-        ),
+        loading: () => null,
+        error: (_, __) => null,
       ),
     );
   }

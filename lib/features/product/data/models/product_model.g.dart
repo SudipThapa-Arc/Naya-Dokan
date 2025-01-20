@@ -15,9 +15,21 @@ _$ProductModelImpl _$$ProductModelImplFromJson(Map<String, dynamic> json) =>
       images:
           (json['images'] as List<dynamic>).map((e) => e as String).toList(),
       category: json['category'] as String,
-      stock: (json['stock'] as num?)?.toInt() ?? 0,
-      rating: (json['rating'] as num?)?.toDouble() ?? 0.0,
-      reviewCount: (json['reviewCount'] as num?)?.toInt() ?? 0,
+      stock: (json['stock'] as num).toInt(),
+      rating: (json['rating'] as num).toDouble(),
+      reviewCount: (json['reviewCount'] as num).toInt(),
+      discount: (json['discount'] as num?)?.toDouble() ?? null,
+      colors: (json['colors'] as List<dynamic>?)
+              ?.map((e) => e as String)
+              .toList() ??
+          const [],
+      sizes:
+          (json['sizes'] as List<dynamic>?)?.map((e) => e as String).toList() ??
+              const [],
+      features: (json['features'] as List<dynamic>?)
+              ?.map((e) => e as String)
+              .toList() ??
+          const [],
       isFavorite: json['isFavorite'] as bool? ?? false,
     );
 
@@ -32,5 +44,9 @@ Map<String, dynamic> _$$ProductModelImplToJson(_$ProductModelImpl instance) =>
       'stock': instance.stock,
       'rating': instance.rating,
       'reviewCount': instance.reviewCount,
+      'discount': instance.discount,
+      'colors': instance.colors,
+      'sizes': instance.sizes,
+      'features': instance.features,
       'isFavorite': instance.isFavorite,
     };

@@ -1,74 +1,71 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../features/cart/data/models/cart_item_model.dart';
-import '../features/cart/data/repositories/cart_repository.dart';
 import '../features/product/data/models/product_model.dart';
-import 'auth_provider.dart';
 
 final cartProvider =
     StateNotifierProvider<CartNotifier, AsyncValue<List<CartItemModel>>>((ref) {
-  final repository = ref.watch(cartRepositoryProvider);
-  final auth = ref.watch(authStateProvider);
-
-  return CartNotifier(repository, auth.value?.id ?? '');
+  return CartNotifier();
 });
 
 class CartNotifier extends StateNotifier<AsyncValue<List<CartItemModel>>> {
-  final CartRepository _repository;
-  final String _userId;
+  CartNotifier() : super(const AsyncValue.data([]));
 
-  CartNotifier(this._repository, this._userId)
-      : super(const AsyncValue.loading()) {
-    if (_userId.isNotEmpty) {
-      loadCart();
+  void addToCart(
+    ProductModel product, {
+    int quantity = 1,
+    String? selectedColor,
+    String? selectedSize,
+  }) {
+    final currentState = state.value ?? [];
+    final existingIndex = currentState.indexWhere((item) =>
+        item.product.id == product.id &&
+        item.selectedColor == selectedColor &&
+        item.selectedSize == selectedSize);
+
+    if (existingIndex >= 0) {
+      state = AsyncValue.data([
+        ...currentState.sublist(0, existingIndex),
+        currentState[existingIndex].copyWith(
+          quantity: currentState[existingIndex].quantity + quantity,
+        ),
+        ...currentState.sublist(existingIndex + 1),
+      ]);
+    } else {
+      state = AsyncValue.data([
+        ...currentState,
+        CartItemModel(
+          id: DateTime.now().toString(),
+          product: product,
+          quantity: quantity,
+          selectedColor: selectedColor,
+          selectedSize: selectedSize,
+        ),
+      ]);
     }
   }
 
-  Future<void> loadCart() async {
-    try {
-      state = const AsyncValue.loading();
-      final items = await _repository.getCartItems(_userId);
-      state = AsyncValue.data(items);
-    } catch (e, st) {
-      state = AsyncValue.error(e, st);
-    }
+  void removeFromCart(String cartItemId) {
+    state = AsyncValue.data(
+        state.value!.where((item) => item.id != cartItemId).toList());
   }
 
-  Future<void> addToCart(ProductModel product) async {
-    try {
-      await _repository.addToCart(_userId, product.id);
-      loadCart();
-    } catch (e) {
-      state = AsyncValue.error(e, state.stackTrace ?? StackTrace.current);
-    }
-  }
-
-  Future<void> updateQuantity(String productId, int quantity) async {
-    try {
-      await _repository.updateQuantity(_userId, productId, quantity);
-      loadCart();
-    } catch (e) {
-      state = AsyncValue.error(e, state.stackTrace ?? StackTrace.current);
-    }
-  }
-
-  Future<void> removeFromCart(String productId) async {
-    try {
-      await _repository.removeFromCart(_userId, productId);
-      loadCart();
-    } catch (e) {
-      state = AsyncValue.error(e, state.stackTrace ?? StackTrace.current);
-    }
-  }
-
-  double get totalAmount {
-    return state.value?.fold<double>(
-          0,
-          (total, item) => total + (item.product.price * item.quantity),
-        ) ??
-        0;
+  void updateQuantity(String cartItemId, int quantity) {
+    state = AsyncValue.data([
+      for (final item in state.value ?? [])
+        if (item.id == cartItemId) item.copyWith(quantity: quantity) else item,
+    ]);
   }
 
   void clearCart() {
-    state = const AsyncValue.data([]);
+    state = AsyncValue.data([]);
   }
+
+  double get totalAmount {
+    return (state.value ?? []).fold(
+      0,
+      (total, item) => total + (item.product.price * item.quantity),
+    );
+  }
+
+  checkout() {}
 }

@@ -1,19 +1,39 @@
-import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
-part 'user_model.freezed.dart';
-part 'user_model.g.dart';
+class UserModel {
+  final String id;
+  final String email;
+  final String name;
+  final String? photoUrl;
+  final DateTime? createdAt;
 
-@freezed
-class UserModel with _$UserModel {
-  const factory UserModel({
-    required String id,
-    required String email,
-    required String name,
-    String? photoUrl,
-    @Default([]) List<String> favorites,
-    @Default({}) Map<String, dynamic> shippingAddress,
-  }) = _UserModel;
+  UserModel({
+    required this.id,
+    required this.email,
+    required this.name,
+    this.photoUrl,
+    this.createdAt,
+  });
 
-  factory UserModel.fromJson(Map<String, dynamic> json) =>
-      _$UserModelFromJson(json);
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'email': email,
+      'name': name,
+      'photoUrl': photoUrl,
+      'createdAt': createdAt?.toIso8601String(),
+    };
+  }
+
+  factory UserModel.fromJson(Map<String, dynamic> json) {
+    return UserModel(
+      id: json['id'] ?? '',
+      email: json['email'] ?? '',
+      name: json['name'] ?? '',
+      photoUrl: json['photoUrl'],
+      createdAt: json['createdAt'] != null
+          ? (json['createdAt'] as Timestamp).toDate()
+          : null,
+    );
+  }
 }

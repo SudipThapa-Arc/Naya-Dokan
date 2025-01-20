@@ -9,12 +9,17 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 // import 'services/auth_service.dart';
 
 Future<void> main() async {
-  await dotenv.load(fileName: ".env");
   WidgetsFlutterBinding.ensureInitialized();
 
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
+
+  try {
+    await dotenv.load(fileName: ".env");
+  } catch (e) {
+    debugPrint('Error loading .env file: $e');
+  }
 
   runApp(
     const ProviderScope(

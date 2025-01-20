@@ -9,6 +9,43 @@ class AuthRepository {
 
   AuthRepository(this.auth, this.firestore);
 
+  Stream<User?> get authStateChanges => auth.authStateChanges();
+
+  Future<UserModel?> getCurrentUser() async {
+    final user = auth.currentUser;
+    if (user != null) {
+      final doc = await firestore.collection('users').doc(user.uid).get();
+      if (doc.exists) {
+        return UserModel.fromJson(doc.data()!);
+      }
+    }
+    return null;
+  }
+
+  Future<void> signOut() async {
+    await auth.signOut();
+  }
+
+  Future<UserModel> signIn({
+    required String email,
+    required String password,
+  }) async {
+    try {
+      final userCredential = await auth.signInWithEmailAndPassword(
+        email: email,
+        password: password,
+      );
+
+      final doc = await firestore
+          .collection('users')
+          .doc(userCredential.user!.uid)
+          .get();
+      return UserModel.fromJson(doc.data()!);
+    } catch (e) {
+      throw handleAuthException(e);
+    }
+  }
+
   Future<UserModel> signUp({
     required String email,
     required String password,
@@ -24,42 +61,19 @@ class AuthRepository {
         id: userCredential.user!.uid,
         email: email,
         name: name,
+        createdAt: DateTime.now(),
       );
 
       await firestore.collection('users').doc(user.id).set(user.toJson());
+      await userCredential.user?.updateDisplayName(name);
 
       return user;
     } catch (e) {
-      throw _handleAuthException(e);
+      throw handleAuthException(e);
     }
   }
 
-  Future<UserModel> signIn({
-    required String email,
-    required String password,
-  }) async {
-    try {
-      final userCredential = await auth.signInWithEmailAndPassword(
-        email: email,
-        password: password,
-      );
-
-      final userDoc = await firestore
-          .collection('users')
-          .doc(userCredential.user!.uid)
-          .get();
-
-      return UserModel.fromJson(userDoc.data()!);
-    } catch (e) {
-      throw _handleAuthException(e);
-    }
-  }
-
-  Future<void> signOut() async {
-    await auth.signOut();
-  }
-
-  String _handleAuthException(dynamic e) {
+  String handleAuthException(dynamic e) {
     if (e is FirebaseAuthException) {
       switch (e.code) {
         case 'email-already-in-use':

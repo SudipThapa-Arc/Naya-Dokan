@@ -12,9 +12,13 @@ class ProductModel with _$ProductModel {
     required double price,
     required List<String> images,
     required String category,
-    @Default(0) int stock,
-    @Default(0.0) double rating,
-    @Default(0) int reviewCount,
+    required int stock,
+    required double rating,
+    required int reviewCount,
+    @Default(null) double? discount,
+    @Default([]) List<String> colors,
+    @Default([]) List<String> sizes,
+    @Default([]) List<String> features,
     @Default(false) bool isFavorite,
   }) = _ProductModel;
 

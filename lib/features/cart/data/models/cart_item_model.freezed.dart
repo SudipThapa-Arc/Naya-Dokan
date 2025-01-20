@@ -23,6 +23,8 @@ mixin _$CartItemModel {
   String get id => throw _privateConstructorUsedError;
   ProductModel get product => throw _privateConstructorUsedError;
   int get quantity => throw _privateConstructorUsedError;
+  String? get selectedColor => throw _privateConstructorUsedError;
+  String? get selectedSize => throw _privateConstructorUsedError;
 
   /// Serializes this CartItemModel to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -40,7 +42,12 @@ abstract class $CartItemModelCopyWith<$Res> {
           CartItemModel value, $Res Function(CartItemModel) then) =
       _$CartItemModelCopyWithImpl<$Res, CartItemModel>;
   @useResult
-  $Res call({String id, ProductModel product, int quantity});
+  $Res call(
+      {String id,
+      ProductModel product,
+      int quantity,
+      String? selectedColor,
+      String? selectedSize});
 
   $ProductModelCopyWith<$Res> get product;
 }
@@ -63,6 +70,8 @@ class _$CartItemModelCopyWithImpl<$Res, $Val extends CartItemModel>
     Object? id = null,
     Object? product = null,
     Object? quantity = null,
+    Object? selectedColor = freezed,
+    Object? selectedSize = freezed,
   }) {
     return _then(_value.copyWith(
       id: null == id
@@ -77,6 +86,14 @@ class _$CartItemModelCopyWithImpl<$Res, $Val extends CartItemModel>
           ? _value.quantity
           : quantity // ignore: cast_nullable_to_non_nullable
               as int,
+      selectedColor: freezed == selectedColor
+          ? _value.selectedColor
+          : selectedColor // ignore: cast_nullable_to_non_nullable
+              as String?,
+      selectedSize: freezed == selectedSize
+          ? _value.selectedSize
+          : selectedSize // ignore: cast_nullable_to_non_nullable
+              as String?,
     ) as $Val);
   }
 
@@ -99,7 +116,12 @@ abstract class _$$CartItemModelImplCopyWith<$Res>
       __$$CartItemModelImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({String id, ProductModel product, int quantity});
+  $Res call(
+      {String id,
+      ProductModel product,
+      int quantity,
+      String? selectedColor,
+      String? selectedSize});
 
   @override
   $ProductModelCopyWith<$Res> get product;
@@ -121,6 +143,8 @@ class __$$CartItemModelImplCopyWithImpl<$Res>
     Object? id = null,
     Object? product = null,
     Object? quantity = null,
+    Object? selectedColor = freezed,
+    Object? selectedSize = freezed,
   }) {
     return _then(_$CartItemModelImpl(
       id: null == id
@@ -135,6 +159,14 @@ class __$$CartItemModelImplCopyWithImpl<$Res>
           ? _value.quantity
           : quantity // ignore: cast_nullable_to_non_nullable
               as int,
+      selectedColor: freezed == selectedColor
+          ? _value.selectedColor
+          : selectedColor // ignore: cast_nullable_to_non_nullable
+              as String?,
+      selectedSize: freezed == selectedSize
+          ? _value.selectedSize
+          : selectedSize // ignore: cast_nullable_to_non_nullable
+              as String?,
     ));
   }
 }
@@ -143,7 +175,11 @@ class __$$CartItemModelImplCopyWithImpl<$Res>
 @JsonSerializable()
 class _$CartItemModelImpl implements _CartItemModel {
   const _$CartItemModelImpl(
-      {required this.id, required this.product, this.quantity = 1});
+      {required this.id,
+      required this.product,
+      required this.quantity,
+      this.selectedColor,
+      this.selectedSize});
 
   factory _$CartItemModelImpl.fromJson(Map<String, dynamic> json) =>
       _$$CartItemModelImplFromJson(json);
@@ -153,12 +189,15 @@ class _$CartItemModelImpl implements _CartItemModel {
   @override
   final ProductModel product;
   @override
-  @JsonKey()
   final int quantity;
+  @override
+  final String? selectedColor;
+  @override
+  final String? selectedSize;
 
   @override
   String toString() {
-    return 'CartItemModel(id: $id, product: $product, quantity: $quantity)';
+    return 'CartItemModel(id: $id, product: $product, quantity: $quantity, selectedColor: $selectedColor, selectedSize: $selectedSize)';
   }
 
   @override
@@ -169,12 +208,17 @@ class _$CartItemModelImpl implements _CartItemModel {
             (identical(other.id, id) || other.id == id) &&
             (identical(other.product, product) || other.product == product) &&
             (identical(other.quantity, quantity) ||
-                other.quantity == quantity));
+                other.quantity == quantity) &&
+            (identical(other.selectedColor, selectedColor) ||
+                other.selectedColor == selectedColor) &&
+            (identical(other.selectedSize, selectedSize) ||
+                other.selectedSize == selectedSize));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode => Object.hash(runtimeType, id, product, quantity);
+  int get hashCode => Object.hash(
+      runtimeType, id, product, quantity, selectedColor, selectedSize);
 
   /// Create a copy of CartItemModel
   /// with the given fields replaced by the non-null parameter values.
@@ -196,7 +240,9 @@ abstract class _CartItemModel implements CartItemModel {
   const factory _CartItemModel(
       {required final String id,
       required final ProductModel product,
-      final int quantity}) = _$CartItemModelImpl;
+      required final int quantity,
+      final String? selectedColor,
+      final String? selectedSize}) = _$CartItemModelImpl;
 
   factory _CartItemModel.fromJson(Map<String, dynamic> json) =
       _$CartItemModelImpl.fromJson;
@@ -207,6 +253,10 @@ abstract class _CartItemModel implements CartItemModel {
   ProductModel get product;
   @override
   int get quantity;
+  @override
+  String? get selectedColor;
+  @override
+  String? get selectedSize;
 
   /// Create a copy of CartItemModel
   /// with the given fields replaced by the non-null parameter values.
