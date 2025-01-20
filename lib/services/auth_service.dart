@@ -1,50 +1,20 @@
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 
 class AuthService {
-  final FirebaseAuth _auth = FirebaseAuth.instance;
-  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  static const String _baseUrl = 'YOUR_BACKEND_URL';
 
-  Future<UserCredential> signUpWithEmail(
-    String email,
-    String password,
-    String name,
-  ) async {
-    try {
-      UserCredential userCredential =
-          await _auth.createUserWithEmailAndPassword(
-        email: email,
-        password: password,
-      );
+  Future<String> getAuthToken(String uid) async {
+    final response = await http.post(
+      Uri.parse('$_baseUrl/api/auth/token'),
+      body: json.encode({'uid': uid}),
+      headers: {'Content-Type': 'application/json'},
+    );
 
-      await _firestore.collection('users').doc(userCredential.user!.uid).set({
-        'name': name,
-        'email': email,
-        'createdAt': FieldValue.serverTimestamp(),
-      });
-
-      await userCredential.user!.updateDisplayName(name);
-      return userCredential;
-    } catch (e) {
-      rethrow;
+    if (response.statusCode == 200) {
+      final data = json.decode(response.body);
+      return data['token'];
     }
-  }
-
-  Future<UserCredential> signInWithEmail(String email, String password) async {
-    try {
-      return await _auth.signInWithEmailAndPassword(
-        email: email,
-        password: password,
-      );
-    } catch (e) {
-      rethrow;
-    }
-  }
-
-  Future<void> signOut() async {
-    await _auth.signOut();
+    throw Exception('Failed to get auth token');
   }
 }
-
-final authServiceProvider = Provider<AuthService>((ref) => AuthService());

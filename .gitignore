@@ -49,4 +49,5 @@ app.*.map.json
 .env.local
 .env.development
 .env.production
-.env.*.local
+node_modules/
+dist/
